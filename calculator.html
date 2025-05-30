@@ -655,88 +655,12 @@
     <div class="background-blur"></div>
     <div id="root"></div>
 
+    <script src="pricingData.js"></script>
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // Данные из Python калькулятора
-        const SUBSCRIPTIONS = {
-            1: "Target_pricing",
-            2: "Retargeting pricing",
-            3: "Колл-центр"
-        };
-
-        const SERVICE1_PRICING = [
-            {contacts: 0, price_per_contact: 70},
-            {contacts: 1000, price_per_contact: 60},
-            {contacts: 3000, price_per_contact: 50},
-            {contacts: 4000, price_per_contact: 45},
-            {contacts: 5000, price_per_contact: 43},
-            {contacts: 6000, price_per_contact: 40},
-            {contacts: 7000, price_per_contact: 36},
-            {contacts: 8000, price_per_contact: 34},
-            {contacts: 9000, price_per_contact: 32},
-            {contacts: 10000, price_per_contact: 30},
-            {contacts: 13000, price_per_contact: 29},
-            {contacts: 15000, price_per_contact: 28},
-            {contacts: 20000, price_per_contact: 26},
-            {contacts: 25000, price_per_contact: 25},
-            {contacts: 30000, price_per_contact: 24},
-            {contacts: 35000, price_per_contact: 23},
-            {contacts: 40000, price_per_contact: 22},
-            {contacts: 45000, price_per_contact: 21},
-            {contacts: 50000, price_per_contact: 20}
-        ];
-
-        const SERVICE2_PRICING = [
-            {contacts: 0, price_per_contact: 50},
-            {contacts: 1000, price_per_contact: 45},
-            {contacts: 3000, price_per_contact: 40},
-            {contacts: 4000, price_per_contact: 38},
-            {contacts: 5000, price_per_contact: 36},
-            {contacts: 6000, price_per_contact: 34},
-            {contacts: 7000, price_per_contact: 32},
-            {contacts: 8000, price_per_contact: 30},
-            {contacts: 9000, price_per_contact: 28},
-            {contacts: 10000, price_per_contact: 26},
-            {contacts: 13000, price_per_contact: 25},
-            {contacts: 15000, price_per_contact: 24},
-            {contacts: 20000, price_per_contact: 22},
-            {contacts: 25000, price_per_contact: 21},
-            {contacts: 30000, price_per_contact: 20},
-            {contacts: 35000, price_per_contact: 19},
-            {contacts: 40000, price_per_contact: 18},
-            {contacts: 45000, price_per_contact: 17},
-            {contacts: 50000, price_per_contact: 16}
-        ];
-
-        const SERVICE3_PRICING = [
-            {contacts: 0, price_per_call: 50},
-            {contacts: 1000, price_per_call: 45},
-            {contacts: 3000, price_per_call: 40},
-            {contacts: 4000, price_per_call: 35},
-            {contacts: 5000, price_per_call: 34},
-            {contacts: 6000, price_per_call: 33},
-            {contacts: 7000, price_per_call: 32},
-            {contacts: 8000, price_per_call: 31},
-            {contacts: 9000, price_per_call: 30},
-            {contacts: 10000, price_per_call: 29},
-            {contacts: 13000, price_per_call: 28},
-            {contacts: 15000, price_per_call: 27},
-            {contacts: 20000, price_per_call: 26},
-            {contacts: 25000, price_per_call: 25},
-            {contacts: 30000, price_per_call: 24},
-            {contacts: 35000, price_per_call: 23},
-            {contacts: 40000, price_per_call: 22},
-            {contacts: 45000, price_per_call: 21},
-            {contacts: 50000, price_per_call: 20}
-        ];
-
-        const TECH_PACKAGES = {
-            "Стандарт": {"price": 14900, "discount": 0.0},
-            "Премиум": {"price": 24900, "discount": 0.05},
-            "Бизнес": {"price": 49900, "discount": 0.1},
-            "Call": {"price": 4990, "discount": 0.0}
-        };
+        // Pricing data (SUBSCRIPTIONS, SERVICE1_PRICING, SERVICE2_PRICING, SERVICE3_PRICING, TECH_PACKAGES)
+        // is now loaded from pricingData.js
 
         function calculateCostByTiers(contacts, pricing) {
             let totalCost = 0;
@@ -1194,6 +1118,69 @@
                             </div>
                         </div>
                     )}
+                </div>
+            );
+        }
+
+        // Define ResultsDisplay component here, before Calculator
+        function ResultsDisplay(props) {
+            const { results, formatNumber, serviceType, contacts } = props; // Added contacts
+
+            if (!results) {
+                return null; // Or some placeholder if results are not yet available
+            }
+
+            return (
+                <div className="results-card">
+                    <div className="results-header">{results.expectedConversions} лида (SQL)</div>
+                    
+                    <div className="results-list">
+                        <div className="result-item">
+                            <svg className="result-icon" viewBox="0 0 16 16">
+                                <circle cx="8" cy="8" r="3" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                            <span className="result-text">Прогноз конверсии: {(results.conversionRate * 100).toFixed(1)}%</span>
+                        </div>
+                        
+                        <div className="result-item">
+                            <svg className="result-icon" viewBox="0 0 16 16">
+                                <circle cx="8" cy="8" r="3" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                            <span className="result-text">Стоимость данных: {contacts > 0 ? Math.round(results.totalCost / contacts) : 0}₽/ед</span>
+                        </div>
+                        
+                        {(serviceType === 1 || serviceType === 2) && (
+                            <div className="result-item">
+                                <svg className="result-icon" viewBox="0 0 16 16">
+                                    <circle cx="8" cy="8" r="3" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                                </svg>
+                                <span className="result-text">Обработка контакта: {contacts > 0 ? Math.round(results.contactProcessingCost / contacts) : 0}₽/ед</span>
+                            </div>
+                        )}
+                        
+                        <div className="result-item">
+                            <svg className="result-icon" viewBox="0 0 16 16">
+                                <circle cx="8" cy="8" r="3" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                            <span className="result-text">Подписка: {formatNumber(results.packageCost)} ₽</span>
+                        </div>
+                        
+                        <div className="result-item">
+                            <svg className="result-icon" viewBox="0 0 16 16">
+                                <circle cx="8" cy="8" r="3" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                            <span className="result-text">Стоимость лида: {formatNumber(results.costPerConversion)} ₽/ед</span>
+                        </div>
+                    </div>
+                    
+                    <div className="budget-section">
+                        <div className="budget-label">Бюджет:</div>
+                        <div className="budget-value">{formatNumber(results.totalCostWithPackage)} ₽</div>
+                    </div>
+                    
+                    <button className="submit-button">
+                        <span className="submit-text">ВЫБРАТЬ</span>
+                    </button>
                 </div>
             );
         }
