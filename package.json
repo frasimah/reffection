@@ -1,0 +1,13 @@
+{
+  "name": "calculator-reflection",
+  "version": "1.0.0",
+  "description": "React calculator application with service pricing and subscription management",
+  "scripts": {
+    "build": "cd calculator-app && npm install && npm run build",
+    "start": "cd calculator-app && npm start"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}
