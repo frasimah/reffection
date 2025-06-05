@@ -764,14 +764,24 @@
             return totalCost;
         }
 
-        function getConversionRate(averageCheck) {
+        function getConversionRate(averageCheck, serviceType) {
+            let baseRate;
             if (averageCheck < 100000) {
-                return 0.03;  // 3%
+                baseRate = 0.03;  // 3%
             } else if (averageCheck >= 100000 && averageCheck < 3000000) {
-                return 0.02;  // 2%
+                baseRate = 0.02;  // 2%
             } else {  // >= 3000000
-                return 0.005;  // 0.5%
+                baseRate = 0.005;  // 0.5%
             }
+            
+            // Применяем множители для разных продуктов
+            if (serviceType === 2) {  // Retargeting Trigger Leads
+                return baseRate * 2;
+            } else if (serviceType === 3) {  // Validation/Reactivation
+                return baseRate * 3;
+            }
+            
+            return baseRate;
         }
 
         function getServicePrice(serviceType, contacts, techPackage) {
@@ -787,7 +797,9 @@
             const totalCost = calculateCostByTiers(contacts, pricing);
             
             let contactProcessingCost = 0;
-            if (serviceType === 1 || serviceType === 2) {
+            // Для tech подписки (Стандарт) обработка контакта не включается
+            const isTechSubscription = techPackage === "Стандарт" && (serviceType === 1 || serviceType === 2);
+            if ((serviceType === 1 || serviceType === 2) && !isTechSubscription) {
                 contactProcessingCost = calculateCostByTiers(contacts, SERVICE3_PRICING);
             }
             
@@ -840,7 +852,7 @@
 
             const calculateResults = () => {
                 const pricing = getServicePrice(serviceType, contacts, techPackage);
-                const conversionRate = getConversionRate(averageCheck);
+                const conversionRate = getConversionRate(averageCheck, serviceType);
                 const expectedConversions = Math.round(contacts * conversionRate);
                 const costPerConversion = pricing.totalCostWithPackage / expectedConversions;
                 
@@ -848,7 +860,8 @@
                     ...pricing,
                     conversionRate,
                     expectedConversions,
-                    costPerConversion
+                    costPerConversion,
+                    isTechSubscription: techPackage === "Стандарт" && (serviceType === 1 || serviceType === 2)
                 });
             };
 
@@ -1136,7 +1149,9 @@
                                         <svg className="result-icon" viewBox="0 0 16 16">
                                             <circle cx="8" cy="8" r="3" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
                                         </svg>
-                                        <span className="result-text">Обработка контакта: {Math.round(results.contactProcessingCost / contacts)}₽/ед</span>
+                                        <span className="result-text">
+                                            Обработка контакта: {results.isTechSubscription ? "не включено" : `${Math.round(results.contactProcessingCost / contacts)}₽/ед`}
+                                        </span>
                                     </div>
                                 )}
                                 
