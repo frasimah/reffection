@@ -746,10 +746,10 @@
             ],
             
             SUBSCRIPTION_OPTIONS: [
-                { id: "tech", name: "Tech", package: "Стандарт" },
-                { id: "must", name: "Must", package: "Премиум" },
-                { id: "pro", name: "Pro", package: "Бизнес" },
-                { id: "call", name: "Call", package: "Call" }
+                { id: "tech", name: "Tech" },
+                { id: "must", name: "Must" },
+                { id: "pro", name: "Pro" },
+                { id: "call", name: "Call" }
             ],
             
             SLIDER: {
@@ -1078,7 +1078,14 @@
             onToggleDropdown 
         }) => {
             const getSelectedSubscriptionName = () => {
-                const selected = CONFIG.SUBSCRIPTION_OPTIONS.find(option => option.package === techPackage);
+                const packageToId = {
+                    "Стандарт": "tech",
+                    "Премиум": "must",
+                    "Бизнес": "pro",
+                    "Call": "call"
+                };
+                const subscriptionId = packageToId[techPackage] || "tech";
+                const selected = CONFIG.SUBSCRIPTION_OPTIONS.find(option => option.id === subscriptionId);
                 return selected ? selected.name : "Tech";
             };
 
@@ -1110,7 +1117,15 @@
                                 .map(option => (
                                     <div 
                                         key={option.id}
-                                        className={`subscription-dropdown-item ${techPackage === option.package ? 'selected' : ''}`}
+                                        className={`subscription-dropdown-item ${(() => {
+                                            const packageToId = {
+                                                "Стандарт": "tech",
+                                                "Премиум": "must",
+                                                "Бизнес": "pro",
+                                                "Call": "call"
+                                            };
+                                            return packageToId[techPackage] === option.id ? 'selected' : '';
+                                        })()} `}
                                         onClick={() => onTechPackageChange(option.id)}
                                     >
                                         {option.name}
@@ -1315,7 +1330,13 @@
                 
                 const selected = CONFIG.SUBSCRIPTION_OPTIONS.find(option => option.id === subscriptionId);
                 if (selected && (serviceType === 1 || serviceType === 2) && selected.id !== 'call') {
-                    setTechPackage(selected.package);
+                    const idToPackage = {
+                        "tech": "Стандарт",
+                        "must": "Премиум",
+                        "pro": "Бизнес",
+                        "call": "Call"
+                    };
+                    setTechPackage(idToPackage[selected.id] || "Стандарт");
                 }
                 setIsSubscriptionDropdownOpen(false);
             }, [serviceType]);
