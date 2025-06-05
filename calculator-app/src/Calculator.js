@@ -266,17 +266,7 @@ const useSlider = (initialValue) => {
 // Helper functions
 const formatNumber = (num) => num.toLocaleString('ru-RU');
 
-const validateProps = (props, propTypes) => {
-    for (const prop in propTypes) {
-        if (propTypes.hasOwnProperty(prop)) {
-            const expectedType = propTypes[prop];
-            const actualType = typeof props[prop];
-            if (actualType !== expectedType) {
-                console.warn(`Warning: Invalid prop '${prop}' of type '${actualType}' supplied to component, expected '${expectedType}'.`);
-            }
-        }
-    }
-};
+// validateProps function removed as it was unused
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
@@ -325,6 +315,7 @@ const ServiceSelector = ({ serviceType, onServiceChange, isDropdownOpen, onToggl
             role="combobox"
             aria-expanded={isDropdownOpen}
             aria-haspopup="listbox"
+            aria-controls="serviceTypeDropdown"
             tabIndex={0}
             onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -440,6 +431,7 @@ const SubscriptionSelector = ({
                 role="combobox"
                 aria-expanded={isDropdownOpen}
                 aria-haspopup="listbox"
+                aria-controls="subscriptionDropdown"
                 tabIndex={serviceType === 3 ? -1 : 0}
                  onKeyDown={(e) => {
                     if ((e.key === 'Enter' || e.key === ' ') && serviceType !== 3) {
@@ -659,7 +651,7 @@ function Calculator() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     
     const sliderHookProps = useSlider(4500);
-    const { value: contacts, setValue: setContacts, sliderRef } = sliderHookProps; // Get sliderRef from hook
+    const { value: contacts, sliderRef } = sliderHookProps; // Get sliderRef from hook
     const results = useCalculator(serviceType, contacts, averageCheck, techPackage);
     
     const handleServiceChange = useCallback((serviceId) => {
