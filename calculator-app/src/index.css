@@ -1,0 +1,19 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Onest', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: radial-gradient(79.19% 22.8% at 79.19% 22.8%, #05A6F5 4.205%, #0168C7 26.063%, #034090 44.495%, #01193B 82.212%, #00040D 100%);
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
