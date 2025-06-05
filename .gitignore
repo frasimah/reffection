@@ -1,6 +1,9 @@
 # Dependencies
 node_modules/
 
+# Legacy files
+calculator.html
+
 # Production build
 build/
 dist/
